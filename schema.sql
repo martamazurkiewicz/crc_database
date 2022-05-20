@@ -30,29 +30,28 @@ CREATE TABLE  main.offer
 	offer_id NUMBER(8) NOT NULL,
 	type_id NUMBER(8) NOT NULL,
 	name VARCHAR2(255) NOT NULL,
-	price NUMBER(8,2) NOT NULL,
-	child_price NUMBER(8,2) NULL,
-	minimal_price NUMBER(8,2) NOT NULL,
+	price NUMBER(7,2) NOT NULL,
+	child_price NUMBER(7,2) NULL,
+	minimal_price NUMBER(7,2) NOT NULL,
 	departure_date DATE NOT NULL,
 	comeback_date DATE NOT NULL,
 	destination_id NUMBER(8) NOT NULL,
-	duration INTERVAL DAY(2) TO SECOND(6) NOT NULL,
+	duration GENERATED ALWAYS AS (comeback_date-departure_date) VIRTUAL,
 	start_offer_date DATE NOT NULL,
 	end_offer_date DATE NOT NULL,
 	picture BLOB NULL,
-	max_paparticipants NUMBER(8) NOT NULL,
-	has_free_spots CHAR(1) NOT NULL,
+	spots_left NUMBER(4) NOT NULL,
+	has_free_spots GENERATED ALWAYS AS (CASE WHEN spots_left > 0 THEN 1 ELSE 0 END) VIRTUAL,
 	CONSTRAINT pk_offer PRIMARY KEY (offer_id),
+    CONSTRAINT spots_left_chk CHECK (spots_left_chk >= 0),
 	CONSTRAINT price_chk CHECK (price >= minimal_price),
 	CONSTRAINT child_price_chk CHECK (child_price >= minimal_price),
+    CONSTRAINT minimal_price_chk CHECK (minimal_price > 0),
 	CONSTRAINT comback_date_chk CHECK (comeback_date > departure_date),
 	CONSTRAINT end_offer_chk CHECK (end_offer_date > start_offer_date),
 	CONSTRAINT fk_offer_destination FOREIGN KEY (destination_id) REFERENCES  main.destination (destination_id) ON DELETE Cascade,
 	CONSTRAINT fk_offer_offer_type FOREIGN KEY (type_id) REFERENCES  main.offer_type (type_id) ON DELETE Cascade
 );
-
-CREATE INDEX offer_available_idx   
- ON  main.offer (has_free_spots);
 
 CREATE TABLE  main.offer_type
 (
