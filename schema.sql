@@ -21,8 +21,8 @@ CREATE TABLE  main.destination
 	country_iso_id CHAR(2) NOT NULL,
 	name VARCHAR2(255) NOT NULL,
 	CONSTRAINT pk_destination PRIMARY KEY (destination_id),
-	CONSTRAINT name_unq UNIQUE (country_iso_id,name) USING INDEX,
-	CONSTRAINT country_id_chk CHECK ()
+	CONSTRAINT dest_name_unq UNIQUE (country_iso_id,name) USING INDEX
+	-- country is check as db_link
 );
 
 CREATE TABLE  main.offer
@@ -59,7 +59,7 @@ CREATE TABLE  main.offer_type
 	type_id NUMBER(8) NOT NULL,
 	name VARCHAR2(255) NOT NULL,
 	CONSTRAINT pk_offer_type PRIMARY KEY (type_id),
-	CONSTRAINT name_unq UNIQUE (name) USING INDEX
+	CONSTRAINT type_name_unq UNIQUE (name) USING INDEX
 );
 
 CREATE TABLE  main.reservation
