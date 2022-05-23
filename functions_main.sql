@@ -12,7 +12,7 @@ EXCEPTION
         RAISE;
 END;
 
-create or replace FUNCTION number_of_pages(per_page IN NUMBER DEFAULT 30) RETURN NUMBER
+CREATE OR REPLACE FUNCTION number_of_pages(per_page IN NUMBER DEFAULT 30) RETURN NUMBER
 AS 
 ln_pages NUMBER;
 BEGIN
