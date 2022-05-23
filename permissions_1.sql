@@ -27,6 +27,7 @@ GRANT CONNECT, RESOURCE TO main;
 GRANT CREATE SESSION, CREATE TABLE TO main;
 GRANT CREATE TRIGGER TO main;
 GRANT CREATE SEQUENCE TO main;
+GRANT CREATE VIEW TO main;
 COMMIT;
 
 -- grant main permission to access web
@@ -40,5 +41,13 @@ BEGIN
 END;
 COMMIT;
 
--- choose right tablespace
-ALTER USER main quota 100M on data;
+-- create web (user used by web server without its own data, uses main schema tables)
+CREATE USER web
+    IDENTIFIED BY password
+    DEFAULT TABLESPACE data; 
+GRANT CONNECT TO web;
+GRANT CREATE SESSION TO web;
+GRANT SELECT ON main.available_offers TO web;
+GRANT EXECUTE ON main.number_of_pages TO web;
+GRANT EXECUTE ON main.available_offers_paginated TO web;
+COMMIT;

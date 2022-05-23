@@ -31,18 +31,17 @@ CREATE SEQUENCE main.destination_seq;
 CREATE TABLE  main.offer
 (
 	offer_id NUMBER NOT NULL,
-	type_id NUMBER(8) NOT NULL,
+	type_id NUMBER NOT NULL,
 	name VARCHAR2(255) NOT NULL,
 	price NUMBER(7,2) NOT NULL,
 	child_price NUMBER(7,2) NULL,
 	minimal_price NUMBER(7,2) NOT NULL,
 	departure_date DATE NOT NULL,
 	comeback_date DATE NOT NULL,
-	destination_id NUMBER(8) NOT NULL,
+	destination_id NUMBER NOT NULL,
 	duration GENERATED ALWAYS AS (comeback_date-departure_date) VIRTUAL,
-	start_offer_date DATE NOT NULL,
+	start_offer_date DATE DEFAULT SYSDATE NOT NULL,
 	end_offer_date DATE NOT NULL,
-	picture BLOB NULL,
 	spots_left NUMBER(4) NOT NULL,
 	has_free_spots GENERATED ALWAYS AS (CASE WHEN spots_left > 0 THEN 1 ELSE 0 END) VIRTUAL,
 	CONSTRAINT pk_offer PRIMARY KEY (offer_id),
@@ -88,3 +87,24 @@ CREATE TABLE main.country_api_error
     location  VARCHAR(400),
     occure_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+CREATE OR REPLACE VIEW available_offers AS
+SELECT 
+    o.offer_id,
+	t.type_id,
+    t.name AS type_name,
+	o.name,
+	o.price,
+	o.child_price,
+	o.departure_date,
+	o.comeback_date,
+    o.duration,
+	d.destination_id,
+    country_pkg.find_country_name(d.country_iso_id) AS country_name,
+    country_pkg.find_country_region(d.country_iso_id) AS country_region,
+    d.name AS destination,
+	o.spots_left
+    FROM offer o
+    JOIN destination d ON o.destination_id = d.destination_id
+    JOIN offer_type t ON o.type_id = t.type_id
+    WHERE (o.has_free_spots = 1 AND o.start_offer_date <= SYSDATE AND o.end_offer_date > SYSDATE);
