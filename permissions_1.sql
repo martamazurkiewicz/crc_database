@@ -24,10 +24,7 @@ CREATE USER main
     DEFAULT TABLESPACE data
     QUOTA 100M ON data; 
 GRANT CONNECT, RESOURCE TO main;
-GRANT CREATE SESSION, CREATE TABLE TO main;
-GRANT CREATE TRIGGER TO main;
-GRANT CREATE SEQUENCE TO main;
-GRANT CREATE VIEW TO main;
+GRANT CREATE SESSION TO main;
 COMMIT;
 
 -- grant main permission to access web
@@ -47,7 +44,4 @@ CREATE USER web
     DEFAULT TABLESPACE data; 
 GRANT CONNECT TO web;
 GRANT CREATE SESSION TO web;
-GRANT SELECT ON main.available_offers TO web;
-GRANT EXECUTE ON main.number_of_pages TO web;
-GRANT EXECUTE ON main.available_offers_paginated TO web;
 COMMIT;
