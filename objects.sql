@@ -7,9 +7,9 @@ CREATE OR REPLACE TRIGGER main.reduce_avail_spots_tg
     BEGIN
         main.reduce_avail_spots(:new.participants_num, :old.participants_num, :new.offer_id);
     END;
-
--- this procedure (trigger) works for action done via web page, so it returns the check_violation to server   
+ 
 CREATE OR REPLACE PROCEDURE main.reduce_avail_spots (in_new_part_num IN NUMBER, in_old_part_num IN NUMBER, in_offer_id IN NUMBER)
+  AUTHID DEFINER
 AS
   check_violation EXCEPTION;
   PRAGMA exception_init(check_violation, -2290);
@@ -22,12 +22,20 @@ BEGIN
         ELSE spots_left - in_new_part_num
             END)
         WHERE offer_id = in_offer_id;
-    commit;
 EXCEPTION
     WHEN check_violation THEN
-        RAISE_APPLICATION_ERROR(sqlcode, 'Not enought free spots in choosen offer');
-        --DBMS_OUTPUT.PUT_LINE('Number of participants in reservation is above the number of still available spots for offer with id ' || in_offer_id);
+        RAISE;
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20000, 'DB internal error');
 END;
+
+CREATE OR REPLACE TRIGGER main.count_reservation_price_tg 
+    BEFORE INSERT OR UPDATE OF participants_num ON main.reservation
+    FOR EACH ROW
+    FOLLOWS main.reduce_avail_spots_tg
+    BEGIN
+        SELECT :new.participants_num*o.price INTO :new.price FROM offer o WHERE o.offer_id = :new.offer_id;
+    END;
 
 CREATE TRIGGER main.client_pk_insert
 BEFORE INSERT ON main.client 
