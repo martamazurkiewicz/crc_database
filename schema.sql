@@ -9,25 +9,28 @@
 
 CREATE TABLE  main.client
 (
-	client_id NUMBER(8) NOT NULL,
+	client_id NUMBER NOT NULL,
 	email VARCHAR2(100) NOT NULL,
 	CONSTRAINT pk_client PRIMARY KEY (client_id),
 	CONSTRAINT email_unq UNIQUE (email) USING INDEX
 );
 
+CREATE SEQUENCE main.client_seq;
+
 CREATE TABLE  main.destination
 (
-	destination_id NUMBER(8) NOT NULL,
+	destination_id NUMBER NOT NULL,
 	country_iso_id CHAR(2) NOT NULL,
 	name VARCHAR2(255) NOT NULL,
 	CONSTRAINT pk_destination PRIMARY KEY (destination_id),
 	CONSTRAINT dest_name_unq UNIQUE (country_iso_id,name) USING INDEX
-	-- country is check as db_link
 );
+
+CREATE SEQUENCE main.destination_seq;
 
 CREATE TABLE  main.offer
 (
-	offer_id NUMBER(8) NOT NULL,
+	offer_id NUMBER NOT NULL,
 	type_id NUMBER(8) NOT NULL,
 	name VARCHAR2(255) NOT NULL,
 	price NUMBER(7,2) NOT NULL,
@@ -53,18 +56,22 @@ CREATE TABLE  main.offer
 	CONSTRAINT fk_offer_offer_type FOREIGN KEY (type_id) REFERENCES  main.offer_type (type_id) ON DELETE Cascade
 );
 
+CREATE SEQUENCE main.offer_seq;
+
 CREATE TABLE  main.offer_type
 (
-	type_id NUMBER(8) NOT NULL,
+	type_id NUMBER NOT NULL,
 	name VARCHAR2(255) NOT NULL,
 	CONSTRAINT pk_offer_type PRIMARY KEY (type_id),
 	CONSTRAINT type_name_unq UNIQUE (name) USING INDEX
 );
 
+CREATE SEQUENCE main.offer_type_seq;
+
 CREATE TABLE  main.reservation
 (
-	client_id NUMBER(8) NOT NULL,
-	offer_id NUMBER(8) NOT NULL,
+	client_id NUMBER NOT NULL,
+	offer_id NUMBER NOT NULL,
 	creation_datetime TIMESTAMP(6) NOT NULL,
 	participants_num NUMBER(8) NOT NULL,
 	price NUMBER(8,2) NOT NULL,
