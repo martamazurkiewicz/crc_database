@@ -43,7 +43,7 @@ CREATE TABLE  main.offer
 	spots_left NUMBER(4) NOT NULL,
 	has_free_spots GENERATED ALWAYS AS (CASE WHEN spots_left > 0 THEN 1 ELSE 0 END) VIRTUAL,
 	CONSTRAINT pk_offer PRIMARY KEY (offer_id),
-    CONSTRAINT spots_left_chk CHECK (spots_left_chk >= 0),
+    CONSTRAINT spots_left_chk CHECK (spots_left >= 0),
 	CONSTRAINT price_chk CHECK (price >= minimal_price),
 	CONSTRAINT child_price_chk CHECK (child_price >= minimal_price),
     CONSTRAINT minimal_price_chk CHECK (minimal_price > 0),
@@ -72,4 +72,12 @@ CREATE TABLE  main.reservation
 	CONSTRAINT participants_num_chk CHECK (participants_num >= 1),
 	CONSTRAINT FK_reservation_client FOREIGN KEY (client_id) REFERENCES  main.client (client_id) ON DELETE Cascade,
 	CONSTRAINT FK_reservation_offer FOREIGN KEY (offer_id) REFERENCES  main.offer (offer_id) ON DELETE Cascade
+);
+
+CREATE TABLE main.country_api_error
+(
+	sqlcode VARCHAR(20), 
+    sqlerrms VARCHAR(4000),  
+    location  VARCHAR(400),
+    occure_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
