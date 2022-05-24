@@ -94,7 +94,7 @@ CREATE TABLE main.country_api_error
     occure_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE OR REPLACE VIEW available_offers AS
+CREATE OR REPLACE VIEW main.available_offers AS
 SELECT 
     o.offer_id,
 	t.type_id,
@@ -109,7 +109,7 @@ SELECT
     country_pkg.find_country_region(d.country_iso_id) AS country_region,
     d.name AS destination,
 	o.spots_left
-    FROM offer o
+    FROM main.offer o
     JOIN destination d ON o.destination_id = d.destination_id
     JOIN offer_type t ON o.type_id = t.type_id
     WHERE (o.has_free_spots = 1 AND o.start_offer_date <= SYSDATE AND o.end_offer_date > SYSDATE);
