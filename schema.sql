@@ -28,6 +28,16 @@ CREATE TABLE  main.destination
 
 CREATE SEQUENCE main.destination_seq;
 
+CREATE TABLE  main.offer_type
+(
+	type_id NUMBER NOT NULL,
+	name VARCHAR2(255) NOT NULL,
+	CONSTRAINT pk_offer_type PRIMARY KEY (type_id),
+	CONSTRAINT type_name_unq UNIQUE (name) USING INDEX
+);
+
+CREATE SEQUENCE main.offer_type_seq;
+
 CREATE TABLE  main.offer
 (
 	offer_id NUMBER NOT NULL,
@@ -55,15 +65,13 @@ CREATE TABLE  main.offer
 
 CREATE SEQUENCE main.offer_seq;
 
-CREATE TABLE  main.offer_type
+CREATE TABLE main.offer_price_archive
 (
-	type_id NUMBER NOT NULL,
-	name VARCHAR2(255) NOT NULL,
-	CONSTRAINT pk_offer_type PRIMARY KEY (type_id),
-	CONSTRAINT type_name_unq UNIQUE (name) USING INDEX
+	offer_id NUMBER NOT NULL,
+    price_diff NUMBER(7,2) NOT NULL,
+    CONSTRAINT pk_offer_price_archive PRIMARY KEY (offer_id),
+    CONSTRAINT FK_offer_price_archive FOREIGN KEY (offer_id) REFERENCES  main.offer (offer_id) ON DELETE Cascade
 );
-
-CREATE SEQUENCE main.offer_type_seq;
 
 CREATE TABLE  main.reservation
 (
