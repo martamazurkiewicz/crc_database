@@ -31,3 +31,9 @@ INSERT ALL
    VALUES (2, 'Warszawa', 800.00, 300.00, to_date('2022-08-11','yyyy-mm-dd'),to_date('2022-08-16','yyyy-mm-dd'), 1, to_date('2022-08','yyyy-mm'), 3)
    SELECT 1 FROM dual;
 commit;
+
+INSERT ALL
+   INTO client(email) VALUES ('admin@test.com')
+   INTO client(email) VALUES ('user@test.com')
+   SELECT 1 FROM dual;
+commit;
